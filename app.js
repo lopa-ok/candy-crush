@@ -103,7 +103,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Make candies fall down
+    function moveDown() {
+        for (let i = 0; i < 55; i++) {
+            if (squares[i + width].classList.contains('blank')) {
+                squares[i + width].className = squares[i].className;
+                squares[i].className = 'candy blank';
+
+                const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
+                const isFirstRow = firstRow.includes(i);
+                if (isFirstRow && squares[i].classList.contains('blank')) {
+                    let randomColor = Math.floor(Math.random() * candyColors.length);
+                    squares[i].className = 'candy ' + candyColors[randomColor];
+                }
+            }
+        }
+    }
+
     window.setInterval(function () {
+        moveDown();
         checkRowForThree();
         checkColumnForThree();
     }, 100);
