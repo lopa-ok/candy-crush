@@ -105,35 +105,78 @@ document.addEventListener('DOMContentLoaded', () => {
         squares.forEach(square => square.setAttribute('draggable', true));
     });
 
+
     // Check for matches
-    function checkRowForThree() {
-        for (let i = 0; i < 61; i++) {
-            let rowOfThree = [i, i + 1, i + 2];
+    function checkRowForMatches() {
+        for (let i = 0; i < 64; i++) {
+            let rowOfFour = [i, i + 1, i + 2, i + 3];
+            let rowOfFive = [i, i + 1, i + 2, i + 3, i + 4];
             let decidedColor = squares[i].className.split(' ')[1];
             const isBlank = squares[i].classList.contains('blank');
 
-            if (rowOfThree.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
-                score += 3;
+            // Check for row of five
+            if (i % width < 4 && rowOfFive.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
+                score += 5;
                 scoreDisplay.innerText = score;
-                rowOfThree.forEach(index => {
+                rowOfFive.forEach(index => {
                     squares[index].className = 'candy blank';
                 });
+            }
+            // Check for row of four
+            else if (i % width < 5 && rowOfFour.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
+                score += 4;
+                scoreDisplay.innerText = score;
+                rowOfFour.forEach(index => {
+                    squares[index].className = 'candy blank';
+                });
+            }
+            // Check for row of three
+            else if (i % width < 6) {
+                let rowOfThree = [i, i + 1, i + 2];
+                if (rowOfThree.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
+                    score += 3;
+                    scoreDisplay.innerText = score;
+                    rowOfThree.forEach(index => {
+                        squares[index].className = 'candy blank';
+                    });
+                }
             }
         }
     }
 
-    function checkColumnForThree() {
-        for (let i = 0; i < 47; i++) {
-            let columnOfThree = [i, i + width, i + width * 2];
+    function checkColumnForMatches() {
+        for (let i = 0; i < 48; i++) {
+            let columnOfFour = [i, i + width, i + width * 2, i + width * 3];
+            let columnOfFive = [i, i + width, i + width * 2, i + width * 3, i + width * 4];
             let decidedColor = squares[i].className.split(' ')[1];
             const isBlank = squares[i].classList.contains('blank');
 
-            if (columnOfThree.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
-                score += 3;
+            // Check for column of five
+            if (i < 40 && columnOfFive.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
+                score += 5;
                 scoreDisplay.innerText = score;
-                columnOfThree.forEach(index => {
+                columnOfFive.forEach(index => {
                     squares[index].className = 'candy blank';
                 });
+            }
+            // Check for column of four
+            else if (i < 48 && columnOfFour.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
+                score += 4;
+                scoreDisplay.innerText = score;
+                columnOfFour.forEach(index => {
+                    squares[index].className = 'candy blank';
+                });
+            }
+            // Check for column of three
+            else if (i < 56) {
+                let columnOfThree = [i, i + width, i + width * 2];
+                if (columnOfThree.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
+                    score += 3;
+                    scoreDisplay.innerText = score;
+                    columnOfThree.forEach(index => {
+                        squares[index].className = 'candy blank';
+                    });
+                }
             }
         }
     }
@@ -157,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.setInterval(function () {
         moveDown();
-        checkRowForThree();
-        checkColumnForThree();
+        checkRowForMatches();
+        checkColumnForMatches();
     }, 100);
 });
