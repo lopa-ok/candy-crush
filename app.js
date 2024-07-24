@@ -1,10 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('grid');
+    const scoreDisplay = document.getElementById('score');
+    const movesDisplay = document.getElementById('moves');
+    const gameOverScreen = document.getElementById('gameOver');
+    const restartButton = document.getElementById('restart');
     const width = 8;
     const squares = [];
     const candyColors = ['red', 'yellow', 'blue', 'green', 'orange', 'purple'];
+    let score = 0;
+    let moves = 20;
 
-
+    // Create Board
     function createBoard() {
         for (let i = 0; i < width * width; i++) {
             const square = document.createElement('div');
@@ -67,12 +73,37 @@ document.addEventListener('DOMContentLoaded', () => {
         let validMove = validMoves.includes(squareIdBeingReplaced);
 
         if (squareIdBeingReplaced && validMove) {
+            moves--;
+            movesDisplay.innerText = moves;
             squareIdBeingReplaced = null;
         } else if (squareIdBeingReplaced && !validMove) {
             squares[squareIdBeingReplaced].className = 'candy ' + colorBeingReplaced;
             squares[squareIdBeingDragged].className = 'candy ' + colorBeingDragged;
         } else squares[squareIdBeingDragged].className = 'candy ' + colorBeingDragged;
+
+        checkForGameOver();
     }
+
+    function checkForGameOver() {
+        if (moves <= 0) {
+            gameOverScreen.classList.remove('hidden');
+            gameOverScreen.style.display = 'flex';
+            squares.forEach(square => square.setAttribute('draggable', false));
+        }
+    }
+
+    restartButton.addEventListener('click', () => {
+        score = 0;
+        moves = 20;
+        scoreDisplay.innerText = score;
+        movesDisplay.innerText = moves;
+        gameOverScreen.classList.add('hidden');
+        gameOverScreen.style.display = 'none';
+        grid.innerHTML = '';
+        squares.length = 0;
+        createBoard();
+        squares.forEach(square => square.setAttribute('draggable', true));
+    });
 
     // Check for matches
     function checkRowForThree() {
@@ -82,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isBlank = squares[i].classList.contains('blank');
 
             if (rowOfThree.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
+                score += 3;
+                scoreDisplay.innerText = score;
                 rowOfThree.forEach(index => {
                     squares[index].className = 'candy blank';
                 });
@@ -96,6 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isBlank = squares[i].classList.contains('blank');
 
             if (columnOfThree.every(index => squares[index].className.includes(decidedColor) && !isBlank)) {
+                score += 3;
+                scoreDisplay.innerText = score;
                 columnOfThree.forEach(index => {
                     squares[index].className = 'candy blank';
                 });
